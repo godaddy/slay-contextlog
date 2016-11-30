@@ -1,7 +1,7 @@
 {
   "name": "slay-contextlog",
-  "version": "1.0.0",
   "description": "slay plugin providing an async aware logger `app.contextLog`",
+  "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "lint": "godaddy-js-style-lint index.js test.js",
