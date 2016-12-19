@@ -5,13 +5,14 @@
 const workflows = require('winston-workflows');
 const domain = require('domain');
 
+var uniqueId = 1;
 /**
  * Attaches functionality to the application that allows for
  * "breadcrumbs" or "context" to be trickled down to different
  * concurrent requests
  *
  * @param {slap.App} app Application instance
- * @param {Object} options Options object
+ * @param {Object} opts Options object
  * @param {Function} done Continuation function
  */
 module.exports = function addContextLog(app, opts, done) {
@@ -35,15 +36,21 @@ module.exports = function addContextLog(app, opts, done) {
    * Runs the specified `fn` inside of a new Domain which is used SOLELY
    * as a place to hang the breadcrumb information off of for logging.
    *
-   * @param {String|Object} breadcrumb What we are breadcrumbing about
+   * @param {String|Object} creationContext What we are breadcrumbing about
+   * @param {Function} logFn Logger function
    * @param {Function} fn Continuation function
    */
-  app.withBreadcrumb = function withBreadcrumb(breadcrumb, fn) {
+  app.withBreadcrumb = function withBreadcrumb(creationContext, logFn, fn) {
     var nestedDomain = domain.create();
-    var log = app.contextLog;
+    var log = app.log;
     nestedDomain.parent = process.domain || null;
-    nestedDomain.log = workflows.breadcrumb(log, breadcrumb);
-    nestedDomain.run(fn);
+    const id = uniqueId++;
+    logFn('contextLog::withBreadcrumb', {
+      childBranchId: id,
+      creationContext
+    });
+    nestedDomain.log = workflows.breadcrumb(log, id, 'branchId');
+    nestedDomain.run(fn, id);
   };
 
   done();
