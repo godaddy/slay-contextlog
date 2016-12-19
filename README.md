@@ -1,3 +1,9 @@
+# slay-contextlog
+[![Build
+Status](https://travis-ci.org/godaddy/slay-contextlog.svg?branch=master)](https://travis-ci.org/godaddy/slay-contextlog)
+
+Creates a context configurable logger for use with asynchronous workflows.
+
 ## Usage
 
 This module can be used by doing:
